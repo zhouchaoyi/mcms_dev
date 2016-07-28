@@ -1,3 +1,8 @@
+# 忽略intellij 自动生成的文件
+target/
+.idea/
+mcms.iml
+
 *.class
 
 # Mobile Tools for Java (J2ME)
