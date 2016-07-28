@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mingsoft.basic.dao.IBasicTypeDao">
+
+
+
+	<resultMap type="com.mingsoft.basic.entity.BasicTypeEntity"
+		id="resultMap">
+		<result column="bt_basic_id" property="basicTypeBasicId" />
+		<result column="bt_type" property="basicTypeType" />
+	</resultMap>
+
+	<insert id="saveEntity" parameterType="com.mingsoft.basic.entity.BasicTypeEntity">
+		insert into basic_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="basicTypeBasicId != null">bt_basic_id,</if>
+			<if test="basicTypeType != null">bt_type,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="basicTypeBasicId != null">#{basicTypeBasicId},</if>
+			<if test="basicTypeType != null">#{basicTypeType},</if>
+		</trim>
+	</insert>
+
+	<delete id="delete" parameterType="list">
+		delete m from BASIC_TYPE M
+		<where>
+			bt_basic_id=#{basicId}
+			and bT_TYPE=#{basicTypeId}
+
+		</where>
+	</delete>
+	<delete id="deleteByBasicId">
+		delete from BASIC_TYPE
+		<where>
+			bt_basic_id=#{basicId}
+		</where>
+	</delete>
+
+
+	<select id="getByBasicIdAndBasicTypeId" resultMap="resultMap">
+		select * from basic_type WHERE
+		<if test="subjectId != null">
+			bt_basic_id=#{basicId}
+		</if>
+		<if test="subjectTypeId != null">
+			and bt_type = #{basicTypeId}
+		</if>
+	</select>
+
+	<select id="queryByBasicId" resultMap="resultMap">
+		select * from basic_type WHERE
+		<if test="subjectId != null">
+			bt_basic_id=#{basicId}
+		</if>
+	</select>
+
+</mapper>	
