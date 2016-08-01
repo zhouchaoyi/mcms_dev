@@ -5,6 +5,12 @@
 		co.column_categoryid,co.column_keyword,co.column_descrip,co.column_type,co.column_url,co.column_listurl,co.column_contentmodelid,co.column_websiteid,co.column_path,
 		ca.category_id,ca.category_title,ca.category_sort,ca.category_datetime,ca.category_managerid,ca.category_modelid,ca.category_categoryid,ca.category_smallimg,ca.status
 	</sql>
+
+	<sql id="column_list_haschild">
+		distinct co.column_categoryid,co.column_keyword,co.column_descrip,co.column_type,co.column_url,co.column_listurl,co.column_contentmodelid,co.column_websiteid,co.column_path,
+		ca.category_id,ca.category_title,ca.category_sort,ca.category_datetime,ca.category_managerid,ca.category_modelid,ca.category_categoryid,ca.category_smallimg,ca.status,
+		case a.category_id when a.category_id then 1 else 0 end as has_child
+	</sql>
 	
 	<sql id="category_column_list">
 		category_id,category_title,category_sort,category_datetime,category_managerid,category_modelid,category_categoryid,category_smallimg
@@ -33,6 +39,7 @@
 		<result column="category_categoryid" property="categoryCategoryId"/><!-- 父类别ID -->
 		<result column="category_smallimg" property="categorySmallImg"/><!-- 略缩图 -->
 		<result column="status" property="status"/><!-- 是否启用 -->
+		<result column="has_child" property="hasChild"/>
 		</resultMap>
 		
 		<!-- 字段绑定  开始 -->
@@ -167,8 +174,10 @@
 	<!-- 获取当前应用下面对应模块的所以栏目分类 -->
 	<select id="queryByAppIdAndModelId"  resultMap="resultMap" >
 		select
-		<include refid="column_list"/>
-		from cms_column co left join category ca on ca.category_id=co.column_categoryid where ca.category_appId=#{appId} and ca.category_modelId=#{modelId}
+		<include refid="column_list_haschild"/>
+		from cms_column co left join category ca on ca.category_id=co.column_categoryid
+		left join v_column a on ca.category_id=a.category_categoryid
+		where ca.category_appId=#{appId} and ca.category_modelId=#{modelId}
 		<if test="status!=null">
 		and ca.status=#{status}
 		</if>

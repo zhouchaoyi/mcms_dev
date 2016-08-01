@@ -136,6 +136,7 @@ $(function(){
 			$("#saveUpdate").css("disabled",false);
 			return;
 		}
+
 		$.ajax({
 		   	type: "post",
 		   	url: URL,
@@ -143,7 +144,8 @@ $(function(){
 		   	dataType:"json",
 		   	beforeSend:function(){
 		   		$("#saveUpdate").attr("disabled",true);
-		   		$("#saveUpdate").text($("#saveUpdate").text()+"中")
+		   		$("#saveUpdate").text($("#saveUpdate").text()+"中");
+                //console.log(formdata);
 		   	},
 		   	success: function(msg){
 		    	if (msg.result) {

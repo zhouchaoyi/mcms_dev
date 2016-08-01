@@ -3,6 +3,8 @@ package com.mingsoft.cms.action;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -314,6 +316,7 @@ public class ColumnAction extends BaseAction {
 //		} else {
 //			list = columnBiz.queryColumnChildListRecursionByWebsiteId(categoryId, websiteId);
 //		}
+		//System.out.println(JSONArray.toJSONString(list));
 		//栏目链接标签拼接字符串
 		request.setAttribute("columnRegexConstant", IParserRegexConstant.HTML_SAVE_PATH+File.separator+websiteId);
 		request.setAttribute("listColumn", JSONArray.toJSONString(list));
@@ -347,6 +350,7 @@ public class ColumnAction extends BaseAction {
 	@RequestMapping("/save")
 	public void save(@ModelAttribute ColumnEntity column,
 			HttpServletRequest request,HttpServletResponse response) {
+		//System.out.println("status="+column.getStatus()+"<<<<<<<<<save");
 		if(!checkForm(column,response)){
 			return;
 		}
@@ -373,8 +377,8 @@ public class ColumnAction extends BaseAction {
 	@RequestMapping("/update")
 	@ResponseBody
 	public void update(@ModelAttribute ColumnEntity column,HttpServletRequest request,HttpServletResponse response) {
-		System.out.println("status="+column.getStatus()+"<<<<<<<<<");
-		System.out.println("ColumnPath="+column.getColumnPath()+"<<<<<<<<<");
+		//System.out.println("status="+column.getStatus()+"<<<<<<<<<");
+		//System.out.println("ColumnPath="+column.getColumnPath()+"<<<<<<<<<");
 		//获取站点ID
 		int websiteId = this.getAppId(request);
 		//检测栏目信息是否合法
@@ -402,6 +406,19 @@ public class ColumnAction extends BaseAction {
 				this.columnPath(request, childList.get(i));
 			}
 		}
+		//更新所有子孙栏目的启用状态
+		int[] categoryIds = columnBiz.queryAllStatusChildrenCategoryIds(column.getCategoryId(), websiteId, this.getModelCodeId(request));
+//		for(int a : categoryIds) {
+//			System.out.println("categoryId="+a+"<<<<<<");
+//		}
+		if(null!=categoryIds && categoryIds.length>0) {
+			List<String> ids = new ArrayList<String>();
+			for(int i=0;i<categoryIds.length;i++) {
+				ids.add(String.valueOf(categoryIds[i]));
+			}
+			columnBiz.updateChildStatus(column.getStatus(), ids);
+		}
+
 		this.outJson(response, ModelCode.CMS_COLUMN, true,null,JSONArray.toJSONString(column.getCategoryId()));
 	
 	}

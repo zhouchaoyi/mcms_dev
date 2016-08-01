@@ -368,9 +368,15 @@
 				{{tmpl($data) '#befored${treeId}'}}
 			</#if>
 			<td>
-				<a class="btn btn-xs red tooltips switch-list columnTitle" data-id="{{= ${jsonId}}}" onclick="clickDome${treeId}(this)" data-parentId="{{= ${jsonPid}}}" data-toggle="tooltip" data-original-title="查看子节点">
-				 	<i class="glyphicon glyphicon-folder-close"></i>
-				</a>
+				{{if hasChild==1}}
+					<a class="btn btn-xs red tooltips switch-list columnTitle" data-id="{{= ${jsonId}}}" onclick="clickDome${treeId}(this)" data-parentId="{{= ${jsonPid}}}" data-toggle="tooltip" data-original-title="查看子节点">
+						<i class="glyphicon glyphicon-folder-close"></i>
+					</a>
+				{{else}}
+					<a class="btn btn-xs red tooltips switch-list columnTitle" data-id="{{= ${jsonId}}}" data-parentId="{{= ${jsonPid}}}" data-toggle="tooltip">
+						<i class="glyphicon glyphicon-list-alt"></i>
+					</a>
+				{{/if}}
 				{{= ${jsonName}}}
 			</td>
 			{{tmpl($data) '#after${treeId}'}}

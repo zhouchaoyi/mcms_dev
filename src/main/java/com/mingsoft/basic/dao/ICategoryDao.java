@@ -110,6 +110,8 @@ public interface ICategoryDao extends IBaseDao {
      */
     public List<CategoryEntity> queryChildrenCategoryId(@Param("categoryId") int categoryId, @Param("appId") int appId, @Param("modelId") int modelId);
 
+    public List<CategoryEntity> queryAllStatusChildrenCategoryId(@Param("categoryId") int categoryId, @Param("appId") int appId, @Param("modelId") int modelId);
+
 
 	/**
 	 * 根据应用编号与模块编号查询分类
@@ -153,4 +155,6 @@ public interface ICategoryDao extends IBaseDao {
 	 * @return
 	 */
 	public List<CategoryEntity> queryByCategoryTitle(@Param("titles") String[] titles);
+
+    public void updateChildStatus(@Param("status") int status,@Param("ids") List<String> ids);
 }

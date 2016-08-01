@@ -216,6 +216,8 @@ public interface ICategoryBiz extends IBaseBiz {
 	 */
 	public int[] queryChildrenCategoryIds(int categoryId, int appId, int modelId);
 
+	public int[] queryAllStatusChildrenCategoryIds(int categoryId, int appId, int modelId);
+
 	/**
 	 * 根据应用编号与模块编号查询分类
 	 * 
@@ -272,5 +274,7 @@ public interface ICategoryBiz extends IBaseBiz {
 	 * @return
 	 */
 	List<CategoryEntity> queryByCategoryTitle(String[] title);
+
+	public void updateChildStatus(int status,List<String> ids);
 
 }

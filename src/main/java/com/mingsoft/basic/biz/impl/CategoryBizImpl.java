@@ -220,6 +220,18 @@ public class CategoryBizImpl extends BaseBizImpl implements ICategoryBiz {
 	}
 
 	@Override
+	public synchronized int[] queryAllStatusChildrenCategoryIds(int categoryId,int appId,int modelId) {
+		// TODO Auto-generated method stub
+		List<CategoryEntity> list = categoryDao.queryAllStatusChildrenCategoryId(categoryId, appId, modelId);
+		int[] ids = new int[list.size()];
+		for (int i=0;i<list.size();i++) {
+			CategoryEntity category = list.get(i);
+			ids[i]=category.getCategoryId();
+		}
+		return ids;
+	}
+
+	@Override
 	public List<CategoryEntity> queryByAppIdOrModelId(Integer appId, Integer modelId) {
 		// TODO Auto-generated method stub
 		return categoryDao.queryByAppIdOrModelId(appId,modelId);
@@ -271,7 +283,10 @@ public class CategoryBizImpl extends BaseBizImpl implements ICategoryBiz {
 		// TODO Auto-generated method stub
 		return categoryDao.queryByCategoryTitle(title);
 	}
-    
+
+	public void updateChildStatus(int status,List<String> ids) {
+		categoryDao.updateChildStatus(status,ids);
+	}
 	
 	
 }

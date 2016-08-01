@@ -94,6 +94,8 @@ public class CategoryEntity extends BaseEntity {
 
 	private int status;
 
+	private String hasChild;
+
 	public CategoryEntity() {
 		super();
 	}
@@ -204,5 +206,12 @@ public class CategoryEntity extends BaseEntity {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	
+
+	public String getHasChild() {
+		return hasChild;
+	}
+
+	public void setHasChild(String hasChild) {
+		this.hasChild = hasChild;
+	}
 }

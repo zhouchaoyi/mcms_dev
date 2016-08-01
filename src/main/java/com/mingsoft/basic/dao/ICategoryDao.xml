@@ -39,6 +39,7 @@
 			<if test="categorySmallImg != null">category_smallimg,</if>
 			<if test="categoryAppId!= null">category_appid,</if>
 			<if test="categoryDescription != null">category_description,</if>
+			<if test="status != null">status,</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="categoryTitle != null">#{categoryTitle},</if>
@@ -50,6 +51,7 @@
 			<if test="categorySmallImg != null">#{categorySmallImg},</if>
 			<if test="categoryAppId != null">#{categoryAppId},</if>
 			<if test="categoryDescription != null">#{categoryDescription}</if>
+			<if test="status != null">#{status}</if>
 		</trim>
 
 	</insert>
@@ -71,6 +73,13 @@
 		where category_id = #{categoryId}
 	</update>
 	<!-- 更新类别结束 -->
+
+	<update id="updateChildStatus">
+		update category set status = #{status} where category_id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
 
 	<!-- 删除类别开始 -->
 	<delete id="deleteEntity" parameterType="int">
@@ -248,6 +257,11 @@
 	<!-- 根据应用编号或模块编号查询分类结束 -->
 
 	<select id="queryChildrenCategoryId" resultMap="resultMap">
+		call
+		p_getAllChildrenEnable(#{categoryId},#{appId},#{modelId});
+	</select>
+
+	<select id="queryAllStatusChildrenCategoryId" resultMap="resultMap">
 		call
 		p_getAllChildren(#{categoryId},#{appId},#{modelId});
 	</select>
