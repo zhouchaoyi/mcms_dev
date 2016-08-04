@@ -20,6 +20,42 @@
 	</resultMap>
 	<!-- 字段绑定结束 -->
 
+	<insert id="saveEntity" parameterType="com.mingsoft.base.entity.BaseEntity"
+			flushCache="true">
+		insert into app
+		<!-- 注入表字段 -->
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="appName != null">APP_NAME,</if>
+			<if test="appDescription != null">APP_DESCRIPTION,</if>
+			<if test="appLogo != null">APP_LOGO,</if>
+			<if test="appDatetime != null">APP_DATETIME,</if>
+			<if test="appKeyword != null">APP_keyword,</if>
+			<if test="appCopyright != null">APP_copyright,</if>
+			<if test="appStyle != null">APP_style,</if>
+			<if test="appUrl!= null">APP_URL,</if>
+			<if test="appManagerId &gt;0 ">APP_managerId,</if>
+			<if test="appMobileStyle != null">APP_MOBILE_STYLE,</if>
+			<if test="appPayDate != null">APP_PAY_DATE,</if>
+			<if test="appPay != null">APP_PAY,</if>
+		</trim>
+
+		<!-- 注入控制层字段 -->
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="appName != null">#{appName},</if>
+			<if test="appDescription != null">#{appDescription},</if>
+			<if test="appLogo != null">#{appLogo},</if>
+			<if test="appDatetime != null">#{appDatetime},</if>
+			<if test="appKeyword != null">#{appKeyword},</if>
+			<if test="appCopyright != null">#{appCopyright},</if>
+			<if test="appStyle != null">#{appStyle},</if>
+			<if test="appUrl!= null">#{appUrl},</if>
+			<if test="appManagerId &gt;0 ">#{appManagerId},</if>
+			<if test="appMobileStyle != null">#{appMobileStyle},</if>
+			<if test="appPayDate != null">#{appPayDate},</if>
+			<if test="appPay != null">#{appPay},</if>
+		</trim>
+	</insert>
+
 	<!-- 更新website开始 -->
 	<update id="updateEntity" parameterType="com.mingsoft.base.entity.BaseEntity"
 		flushCache="true">
@@ -73,4 +109,13 @@
 		select * from app where APP_MANAGERID =
 		#{appManagerId}
 	</select>
+
+	<select id="queryAll"  resultMap="resultMap" >
+		select * from app
+	</select>
+
+	<delete id="deleteEntity" parameterType="int">
+		delete from app where
+		app_id = #{appId}
+	</delete>
 </mapper>

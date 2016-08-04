@@ -25,6 +25,8 @@ import java.io.File;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baidu.ueditor.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -96,6 +98,28 @@ public class AppAction extends BaseAction {
 
 	}
 
+	@RequestMapping(value = "/add")
+	public String add(ModelMap mode, HttpServletRequest request) {
+		// 判断否是超级管理员,是的话不显示站点风格
+		if (this.isSystemManager(request)) {
+			mode.addAttribute("SystemManager", true);
+		} else {
+			mode.addAttribute("SystemManager", false);
+		}
+		AppEntity app = new AppEntity();
+		mode.addAttribute("app", app);
+		//System.out.println("appID="+app.getAppId()+"<<<<<");
+		return view("/app/app");
+
+	}
+
+	@RequestMapping(value = "/list")
+	public String list(ModelMap mode, HttpServletRequest request) {
+		List<BaseEntity> list = appBiz.queryAll();
+		mode.addAttribute("list", list);
+		return view("/app/app_list");
+	}
+
 	/**
 	 * 更新站点信息
 	 * 
@@ -111,6 +135,61 @@ public class AppAction extends BaseAction {
 	@RequestMapping("/update")
 	public void update(ModelMap mode, @ModelAttribute AppEntity app, HttpServletRequest request,
 			HttpServletResponse response) {
+//		int appId = app.getAppId();
+//		System.out.println("appId="+appId+"<<<<<<<<");
+		mode.clear();
+		// 获取Session值
+		ManagerEntity managerSession = (ManagerEntity) getManagerBySession(request);
+		if (managerSession == null) {
+			return;
+		}
+		mode.addAttribute("managerSession", managerSession);
+
+		// 判断否是超级管理员,不是则不修改应用续费时间和清单
+		if (!this.isSystemManager(request)) {
+			app.setAppPayDate(null);
+			app.setAppPay(null);
+			// 设置当前的站点id(注释掉，不然所有站点的id都是当前域名的所对应的站点id了)
+			//app.setAppId(this.getAppId(request));
+		}
+		int managerRoleID = managerSession.getManagerRoleID();
+		// 判断站点数据的合法性
+		// 获取cookie
+		String cookie = this.getCookie(request, CookieConstEnum.PAGENO_COOKIE);
+		int pageNo = 1;
+		// 判断cookies是否为空
+		if (!StringUtil.isBlank(cookie) && Integer.valueOf(cookie) > 0) {
+			pageNo = Integer.valueOf(cookie);
+		}
+		mode.addAttribute("pageNo", pageNo);
+		if (!checkForm(app, response)) {
+			return;
+		}
+		if (!StringUtil.isBlank(app.getAppLogo())) {
+			app.setAppLogo(app.getAppLogo().replace("|", ""));
+		}
+
+		// 过滤地址后面的/\符号
+		String url = app.getAppUrl();
+		String _url[] = url.split("\r\n");
+		StringBuffer sb = new StringBuffer();
+		for (String temp : _url) {
+			String lastChar = temp.trim().substring(temp.length() - 1);
+			if (lastChar.equals("/") || lastChar.equals("\\")) {
+				sb.append(temp.substring(0, temp.trim().length() - 1));
+			} else {
+				sb.append(temp);
+			}
+			sb.append("\r\n");
+		}
+		app.setAppUrl(sb.toString());
+		appBiz.updateEntity(app);
+		this.outJson(response, ModelCode.APP, true, String.valueOf(pageNo), String.valueOf(managerRoleID));
+	}
+
+	@RequestMapping("/save")
+	public void save(ModelMap mode, @ModelAttribute AppEntity app, HttpServletRequest request,
+					   HttpServletResponse response) {
 		mode.clear();
 		// 获取Session值
 		ManagerEntity managerSession = (ManagerEntity) getManagerBySession(request);
@@ -157,8 +236,15 @@ public class AppAction extends BaseAction {
 			sb.append("\r\n");
 		}
 		app.setAppUrl(sb.toString());
-		appBiz.updateEntity(app);
+		appBiz.saveEntity(app);
 		this.outJson(response, ModelCode.APP, true, String.valueOf(pageNo), String.valueOf(managerRoleID));
+	}
+
+	@RequestMapping("/{appId}/delete")
+	@ResponseBody
+	public void delete(@PathVariable int appId,HttpServletResponse response, HttpServletRequest request) {
+		appBiz.deleteEntity(appId);
+		this.outJson(response, ModelCode.APP, true, "true");
 	}
 
 	/**

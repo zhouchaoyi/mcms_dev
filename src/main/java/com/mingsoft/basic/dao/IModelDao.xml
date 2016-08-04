@@ -48,7 +48,7 @@
 	<select id="queryAll" resultMap="resultMap">
 		select
 		<include refid="column_list" />
-		from model
+		from model where status=1
 	</select>
 
 
@@ -58,14 +58,14 @@
 	<select id="queryByPage" resultMap="resultMap" parameterType="java.util.Map">
 		select
 		<include refid="column_list" />
-		from model order by model_id desc limit ${pageNo*pageSize},#{pageSize}
+		from model where status=1 order by model_id desc limit ${pageNo*pageSize},#{pageSize}
 	</select>
 	<!-- 查询带分页结束 -->
 
 	<!-- 查询模块总数 -->
 	<select id="queryCount" resultType="int">
 		select count(*) from
-		model
+		model where status=1
 	</select>
 	<!-- 查询模块总数结束 -->
 
@@ -85,7 +85,7 @@
 		MODEL_ID,MODEL_TITLE,MODEL_MODELID,MODEL_URL,MODEL_ICON
 		from model
 		where model_id in (select RM_MODELID from role_model where
-		RM_ROLEID=#{roleId})
+		RM_ROLEID=#{roleId}) and status=1
 	</select>
 	<!--根据角色id查询model结束 -->
 
@@ -111,14 +111,14 @@
 		select
 		<include refid="column_list" />
 		from model
-		where MODEL_MODELID = #{modelModelId}
+		where MODEL_MODELID = #{modelModelId} and status=1
 	</select>
 
 	<!-- 查找顶级模块 -->
 	<select id="queryParent" resultMap="resultMap">
 		select
 		<include refid="column_list" />
-		from model where model_modelId = 0
+		from model where model_modelId = 0 and status=1
 	</select>
 
 	<!-- 根据管理员ID查询模块集合 -->
@@ -126,7 +126,7 @@
 		select
 		<include refid="column_list" />
 		from model
-		where 1=1
+		where status=1
 		<if test="modelManagerId != null">and MODEL_MODELMANAGERID=#{modelManagerId}</if>
 		<if test="modelId != null">and MODEL_MODELId=#{modelId}</if>
 
@@ -137,14 +137,14 @@
 		select
 		<include refid="column_list" />
 		from model
-		where MODEL_MODELMANAGERID != 1;
+		where MODEL_MODELMANAGERID != 1 and status=1;
 	</select>
 	
 	<select id="queryModelByIsMenu" resultMap="resultMap">
 		select
 		<include refid="column_list" />
 		from model
-		where MODEL_ISMENU=${modelEnum};
+		where MODEL_ISMENU=${modelEnum} and status=1;
 	</select>
 	
 	<!-- 删除 -->
